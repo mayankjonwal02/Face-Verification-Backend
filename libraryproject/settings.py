@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-b&b^z@gd20s$@-(v%$g^__j&g!ka7anb@h13g3bc@6d)taq2&-
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
-ALLOWED_HOSTS = ['10.1.1.4','localhost']
+ALLOWED_HOSTS = ['10.1.1.4','localhost','74.235.31.173']
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
