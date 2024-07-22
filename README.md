@@ -1,6 +1,3 @@
-
-
-
 # API Documentation
 
 ## Base URL
@@ -42,6 +39,33 @@
 ---
 
 ### 4. Register User
+- **URL**: `/register/`
+- **Method**: `GET`
+- **Description**: Retrieves a list of users with their IDs and timestamps.
+
+#### Response
+- **Success Response**:
+  - **Status Code**: `200 OK`
+  - **Content**:
+    ```json
+    {
+      "message": "Hello, world!",
+      "data": [
+        {
+          "id": "user_id_1",
+          "timestamp": "timestamp_1"
+        },
+        {
+          "id": "user_id_2",
+          "timestamp": "timestamp_2"
+        }
+      ]
+    }
+    ```
+
+---
+
+### 5. Register User
 - **URL**: `/register/`
 - **Method**: `POST`
 - **Description**: Registers a new user with an image.
@@ -86,7 +110,7 @@
 
 ---
 
-### 5. Verify User
+### 6. Verify User
 - **URL**: `/verify/`
 - **Method**: `POST`
 - **Description**: Verifies a user by recognizing their face in the uploaded image.
@@ -125,7 +149,7 @@
 
 ---
 
-### 6. Delete User
+### 7. Delete User
 - **URL**: `/register/`
 - **Method**: `DELETE`
 - **Description**: Deletes a user and their associated image.
