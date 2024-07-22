@@ -1,4 +1,4 @@
 django
 django-cors
 djangorestframework
-whitenoise
+django-sslserver

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-b&b^z@gd20s$@-(v%$g^__j&g!ka7anb@h13g3bc@6d)taq2&-
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
-ALLOWED_HOSTS = ['10.1.1.4','localhost','74.235.31.173']
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
@@ -34,7 +34,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
-
+    'sslserver',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -85,9 +85,14 @@ WSGI_APPLICATION = 'libraryproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'libraryregistration',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
+    
 }
 
 
@@ -126,6 +131,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# settings.py
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+TESTMEDIA = "/testmedia/"
+TESTMEDIA_ROOT = os.path.join(BASE_DIR, 'testmedia')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
