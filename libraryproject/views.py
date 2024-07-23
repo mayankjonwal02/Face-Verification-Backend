@@ -10,7 +10,7 @@ from deepface import DeepFace
 from django.http import JsonResponse
 import shutil
 from PIL import Image
-
+import pyperclip
 
 def developedby(request):
     return render(request, 'developedby.html')
@@ -112,11 +112,12 @@ class VerifyView(APIView):
                 recognition = DeepFace.find(
                     img_path=temp_image_path, 
                     db_path=settings.MEDIA_ROOT, 
-                    model_name="VGG-Face", 
-                    distance_metric="euclidean_l2", 
+                    model_name="Facenet", 
+                    distance_metric="cosine", 
                     enforce_detection=True
                 )
                 print(recognition)
+                pyperclip.copy(recognition[0])
                 
                 # Handle recognition result
                 if recognition:
@@ -132,7 +133,7 @@ class VerifyView(APIView):
                         shutil.copy(temp_image_path, new_image_path)
                         os.remove(temp_image_path)
                         
-                        return JsonResponse({'message': 'Image received successfully!', 'recognition': identity})
+                        return JsonResponse({'message': 'Image received successfully!', 'recognition': identity })
                     except KeyError as e:
                         os.remove(temp_image_path)
                         return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown'})
