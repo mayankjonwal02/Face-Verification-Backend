@@ -27,6 +27,7 @@
         <video id="video" autoplay></video>
         <canvas id="canvas" width="320" height="240"></canvas>
     </div>
+    <input type="text" id="userId" placeholder="Enter ID" />
     <button id="capture">Capture</button>
     <button id="upload">Upload</button>
     <div id="message"></div>
@@ -37,6 +38,7 @@
         const captureButton = document.getElementById('capture');
         const uploadButton = document.getElementById('upload');
         const messageDiv = document.getElementById('message');
+        const userIdInput = document.getElementById('userId');
         
         // Get access to the camera
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -60,7 +62,10 @@
 
             canvas.toBlob(function(blob) {
                 const formData = new FormData();
+                const userId = userIdInput.value.trim();
+
                 formData.append('image', blob, 'capture.jpg');
+                formData.append('id', userId);
 
                 fetch('/verify/', {
                     method: 'POST',
@@ -68,7 +73,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.recognition){
+                    if (data.recognition) {
                         messageDiv.textContent = `Verified: ${data.recognition}`;
                     } else if (data.error) {
                         messageDiv.textContent = `Error: ${data.error}`;

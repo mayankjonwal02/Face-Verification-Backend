@@ -6,11 +6,15 @@ from rest_framework import status
 from django.conf import settings
 import os
 from datetime import datetime
-from deepface import DeepFace
+from deepface import DeepFace 
 from django.http import JsonResponse
 import shutil
 from PIL import Image
 import pyperclip
+# from .function1 import is_face_front_center
+from .function2 import recognize_face
+import re
+
 
 def developedby(request):
     return render(request, 'developedby.html')
@@ -33,6 +37,20 @@ class RegisterView(APIView):
 
             if not user_id or not image:
                 return JsonResponse({'error': 'ID and image are required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user_id = user_id.strip()
+            user_id = user_id.upper()
+
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            image_name = user_id + '_' + timestamp + '.jpg'
+            image_path = os.path.join(settings.MEDIA_ROOT, image_name)
+            img = Image.open(image)
+            img = img.resize((1200, 800), Image.LANCZOS)
+            img.save(image_path)
+
+            # if(is_face_front_center(img) == False):
+            #     os.remove(image_path)
+            #     return JsonResponse({'error': 'Look at Front '}, status=status.HTTP_400_BAD_REQUEST)
 
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM users WHERE id = %s", [user_id])
@@ -40,17 +58,11 @@ class RegisterView(APIView):
                 if result:
                     return JsonResponse({'error': 'User already exists'}, status=status.HTTP_409_CONFLICT)
 
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            image_name = user_id + '_' + timestamp + '.jpg'
-            image_path = os.path.join(settings.MEDIA_ROOT, image_name)
 
             # with open(image_path, 'wb') as destination:
             #     for chunk in image.chunks():
             #         destination.write(chunk)
 
-            img = Image.open(image)
-            img = img.resize((1200, 800), Image.LANCZOS)
-            img.save(image_path)
 
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO users (id) VALUES (%s)", [user_id])
@@ -66,8 +78,12 @@ class RegisterView(APIView):
         data = request.data
         user_id = data.get('id')
 
+
         if not user_id:
             return JsonResponse({'error': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user_id = user_id.strip()
+        user_id = user_id.upper()
 
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM users WHERE id = %s", [user_id])
@@ -91,10 +107,14 @@ class VerifyView(APIView):
     def post(self, request):
         try:
             data = request.data
+            user_id = data.get('id')
             image = request.FILES.get('image')
 
-            if not image:
-                return Response({'error': 'Image is required'}, status=status.HTTP_400_BAD_REQUEST)
+            if not image or not user_id:
+                return Response({'error': 'Image and ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user_id = user_id.strip()
+            user_id = user_id.upper()
 
             # Save the uploaded image to a temporary location
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -107,17 +127,23 @@ class VerifyView(APIView):
             img = Image.open(image)
             img = img.resize((1200, 800), Image.LANCZOS)
             img.save(temp_image_path)
+
+           
+            # if( is_face_front_center(temp_image_path) == False):
+            #     os.remove(temp_image_path)
+            #     return JsonResponse({'error': 'Look in camera'}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+            
             try:
-                # Use DeepFace to recognize the face in the uploaded image
-                recognition = DeepFace.find(
-                    img_path=temp_image_path, 
-                    db_path=settings.MEDIA_ROOT, 
-                    model_name="Facenet", 
-                    distance_metric="cosine", 
-                    enforce_detection=True
-                )
+                # Use DeepFace to recognize the face in the uploaded image.
+               
+                recognition = recognize_face(temp_image_path)
+                
                 print(recognition)
-                pyperclip.copy(recognition[0])
+               
+                
+          
                 
                 # Handle recognition result
                 if recognition:
@@ -126,14 +152,18 @@ class VerifyView(APIView):
                         
                         identity = remove_data_jpg(recognition[0]['identity'][0])
                         identity = identity.split('_')[0]
-                        new_image_name = identity + '_' + timestamp + '.jpg'
-                        new_image_path = os.path.join(settings.MEDIA_ROOT, new_image_name)
-                        
+                        if identity == user_id:
+                            keep_latest_two_images(user_id)
+                            new_image_name = identity + '_' + timestamp + '.jpg'
+                            new_image_path = os.path.join(settings.MEDIA_ROOT, new_image_name)
                         # Copy the image from the temporary path to the new path
-                        shutil.copy(temp_image_path, new_image_path)
-                        os.remove(temp_image_path)
-                        
-                        return JsonResponse({'message': 'Image received successfully!', 'recognition': identity })
+                            shutil.copy(temp_image_path, new_image_path)
+                            os.remove(temp_image_path)
+                            
+                            return JsonResponse({'message': 'Image received successfully!', 'recognition': identity })
+                        else:
+                            os.remove(temp_image_path)
+                            return JsonResponse({'error': 'Invalid User'})
                     except KeyError as e:
                         os.remove(temp_image_path)
                         return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown'})
@@ -151,7 +181,8 @@ class VerifyView(APIView):
                 pass
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
+
+
 
 def remove_data_jpg(string):
 
@@ -163,8 +194,31 @@ def remove_data_jpg(string):
   else:
     # Handle cases where "Data/" or ".jpg" is not present
     return string
+  
 
-        
+def keep_latest_two_images( name):
+    # Regular expression to match the filename pattern
+    pattern = re.compile(rf'^{re.escape(name)}_(\d{{8}}\d{{6}})\.jpg$')
+    
+    # List to hold tuples of (timestamp, filepath)
+    images = []
+
+    folder_path = os.path.join(settings.MEDIA_ROOT)
+    # Iterate over files in the folder
+    for filename in os.listdir(folder_path):
+        match = pattern.match(filename)
+        if match:
+            timestamp_str = match.group(1)
+            timestamp = datetime.strptime(timestamp_str, '%Y%m%d%H%M%S')
+            filepath = os.path.join(folder_path, filename)
+            images.append((timestamp, filepath))
+    
+    # Sort images by timestamp in descending order
+    images.sort(reverse=True, key=lambda x: x[0])
+    
+    # Keep only the latest two images and delete the rest
+    for image in images[2:]:
+        os.remove(image[1])
 
 
 

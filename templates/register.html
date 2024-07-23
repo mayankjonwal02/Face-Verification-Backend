@@ -52,6 +52,7 @@
 
         // Upload the image
         uploadButton.addEventListener('click', function() {
+            messageDiv.textContent = 'Uploading...';
             const id = document.getElementById('idInput').value;
             if (!id) {
                 alert('ID is required');
