@@ -9,6 +9,7 @@ from datetime import datetime
 from deepface import DeepFace
 from django.http import JsonResponse
 import shutil
+from PIL import Image
 
 
 def developedby(request):
@@ -43,9 +44,13 @@ class RegisterView(APIView):
             image_name = user_id + '_' + timestamp + '.jpg'
             image_path = os.path.join(settings.MEDIA_ROOT, image_name)
 
-            with open(image_path, 'wb') as destination:
-                for chunk in image.chunks():
-                    destination.write(chunk)
+            # with open(image_path, 'wb') as destination:
+            #     for chunk in image.chunks():
+            #         destination.write(chunk)
+
+            img = Image.open(image)
+            img = img.resize((1200, 800), Image.LANCZOS)
+            img.save(image_path)
 
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO users (id) VALUES (%s)", [user_id])
@@ -96,10 +101,12 @@ class VerifyView(APIView):
             temp_image_name = 'temp_' + timestamp + '.jpg'
             temp_image_path = os.path.join(settings.TESTMEDIA_ROOT, temp_image_name)
 
-            with open(temp_image_path, 'wb') as destination:
-                for chunk in image.chunks():
-                    destination.write(chunk)
-
+            # with open(temp_image_path, 'wb') as destination:
+            #     for chunk in image.chunks():
+            #         destination.write(chunk)
+            img = Image.open(image)
+            img = img.resize((1200, 800), Image.LANCZOS)
+            img.save(temp_image_path)
             try:
                 # Use DeepFace to recognize the face in the uploaded image
                 recognition = DeepFace.find(
@@ -139,7 +146,7 @@ class VerifyView(APIView):
         except Exception as e:
             try:
                 os.remove(temp_image_path)
-            except Exception as e:
+            except Exception as en:
                 pass
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
