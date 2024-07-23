@@ -2,3 +2,7 @@ django
 django-cors
 djangorestframework
 deepface
+requests_toolbelt
+opencv-python
+numpy
+mediapipe

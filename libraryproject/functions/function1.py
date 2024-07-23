@@ -2,22 +2,17 @@
 # import mediapipe as mp
 # import numpy as np
 
-# # Initialize MediaPipe Face Mesh
-# mp_face_mesh = mp.solutions.face_mesh
-# face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-# # Initialize webcam
-# cap = cv2.VideoCapture(0)
+# def is_face_front_center(image):
+#     # Read the image
+#     mp_face_mesh = mp.solutions.face_mesh
+#     face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+#     # image = cv2.imread(image_path)
 
-# while cap.isOpened():
-#     success, image = cap.read()
-#     if not success:
-#         print("Ignoring empty camera frame.")
-#         continue
+#     if image is None:
+#         print(f"Error: Unable to read image at image")
+#         return False
 
-#     # Flip the image horizontally for a later selfie-view display
-#     image = cv2.flip(image, 1)
-    
 #     # Convert the BGR image to RGB
 #     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -30,7 +25,6 @@
 #             nose_tip = face_landmarks.landmark[4]
 #             left_eye = face_landmarks.landmark[33]
 #             right_eye = face_landmarks.landmark[263]
-#             mouth_center = face_landmarks.landmark[13]
 #             left_mouth = face_landmarks.landmark[61]
 #             right_mouth = face_landmarks.landmark[291]
 
@@ -63,15 +57,12 @@
 #                 vertical_direction = "Center"
 
 #             face_direction = f"{horizontal_direction} {vertical_direction}"
+#             print(face_direction)
 
-#             # Display the face direction
-#             cv2.putText(image, face_direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+#             # Return True if face direction is "Front Center", False otherwise
+#             return face_direction == "Front Center"
 
-#     # Display the image
-#     cv2.imshow('Face Direction', image)
-    
-#     if cv2.waitKey(5) & 0xFF == 27:  # Press 'ESC' to exit
-#         break
+#     # If no face is detected, return False
+#     return False
 
-# cap.release()
-# cv2.destroyAllWindows()
+        

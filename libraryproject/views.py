@@ -11,10 +11,12 @@ from django.http import JsonResponse
 import shutil
 from PIL import Image
 import pyperclip
-# from .function1 import is_face_front_center
-from .function2 import recognize_face
-import re
 
+from .functions.function2 import recognize_face
+import re
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+import requests
+from django.urls import reverse
 
 def developedby(request):
     return render(request, 'developedby.html')
@@ -115,6 +117,31 @@ class VerifyView(APIView):
             
             user_id = user_id.strip()
             user_id = user_id.upper()
+
+            # try:
+
+            #     multipart_data = MultipartEncoder(
+            #         fields={
+            #             'image': (image.name, image, image.content_type),
+                    
+            #         }
+            #     )
+            #     headers = {'Content-Type': multipart_data.content_type}
+            #     internal_api_url = request.build_absolute_uri(reverse('isfront'))
+            #     response = requests.post(internal_api_url, data=multipart_data, headers=headers, verify=False)
+            #     print(response.content)
+            #     if response.status_code == 200:
+            #         data = response.json()
+            #         if data['front'] == False:
+            #             return JsonResponse({'error': 'Look in camera'}, status=status.HTTP_400_BAD_REQUEST)
+            #     else:
+            #         data = response.json()
+            #         return JsonResponse({'error': data['error']}, status=response.status_code)
+           
+            # except requests.exceptions.RequestException as e:
+                # return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
             # Save the uploaded image to a temporary location
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')

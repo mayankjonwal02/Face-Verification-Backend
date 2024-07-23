@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import libraryproject.views as views
+import libraryproject.views as views 
+import libraryproject.views1 as views1
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -27,6 +28,7 @@ urlpatterns = [
     path('verifyPage/', views.verifyPage),
     path('register/', views.RegisterView.as_view()),
     path('verify/', views.VerifyView.as_view()),
+    # path('isfront/', views1.isFront, name='isfront'),
 ]
 
 
