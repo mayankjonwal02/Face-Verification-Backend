@@ -135,11 +135,7 @@
   - `id` (string): User ID (Primary Key)
   - `timestamp` (datetime): Timestamp of registration
 
-#### **Functions**
 
-- **recognize_face(image_path):** Custom function to recognize faces using DeepFace.
-- **remove_data_jpg(string):** Custom function to remove `.jpg` from the string.
-- **keep_latest_two_images(name):** Custom function to keep only the latest two images for a user and delete the rest.
 
 ---
 
