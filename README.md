@@ -104,26 +104,6 @@
       }
       ```
 
-#### **4. Developed By Page**
-- **URL:** `/developedby/`
-- **Method:** `GET`
-- **Response Body:**
-  - **Success (200 OK):**
-    - Renders the `developedby.html` page.
-
-#### **5. Registration Page**
-- **URL:** `/registerPage/`
-- **Method:** `GET`
-- **Response Body:**
-  - **Success (200 OK):**
-    - Renders the `register.html` page.
-
-#### **6. Verify Page**
-- **URL:** `/verifyPage/`
-- **Method:** `GET`
-- **Response Body:**
-  - **Success (200 OK):**
-    - Renders the `verify.html` page.
 
 ---
 
