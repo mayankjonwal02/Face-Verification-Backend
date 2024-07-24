@@ -1,4 +1,0 @@
-django
-django-cors
-djangorestframework
-django-sslserver

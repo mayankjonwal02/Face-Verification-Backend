@@ -148,3 +148,62 @@
 
 ---
 
+
+### **Setup Instructions**
+
+#### **1. Install Required Packages**
+
+Ensure you have all the required packages installed by using the following command:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### **2. Configure MySQL Database in `settings.py`**
+
+Add the following configuration to your `settings.py` file to set up the MySQL database connection:
+
+```python
+# settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'libraryregistration',
+        'USER': 'your_mysql_user',
+        'PASSWORD': 'your_mysql_password',
+        'HOST': 'localhost',  # Or the address of your MySQL server
+        'PORT': '3306',       # Default MySQL port
+    }
+}
+
+# Ensure you have 'django.db.backends.mysql' installed
+# You can install it using: pip install mysqlclient
+```
+
+#### **3. Create the `users` Table in MySQL**
+
+Execute the following SQL command in your MySQL database to create the `users` table:
+
+```sql
+CREATE DATABASE IF NOT EXISTS libraryregistration;
+
+USE libraryregistration;
+
+CREATE TABLE users (
+    id VARCHAR(255) PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+
+
+#### **4. Make and Apply Migrations**
+
+Run the following commands to create and apply the necessary migrations:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
