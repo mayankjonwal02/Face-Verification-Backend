@@ -187,26 +187,26 @@ class VerifyView(APIView):
                             shutil.copy(temp_image_path, new_image_path)
                             os.remove(temp_image_path)
                             
-                            return JsonResponse({'message': 'Image received successfully!', 'recognition': identity })
+                            return JsonResponse({'message': 'Image received successfully!', 'recognition': identity , "verified": True})
                         else:
                             os.remove(temp_image_path)
-                            return JsonResponse({'error': 'Invalid User'})
+                            return JsonResponse({'error': 'Invalid User',"verified": False})
                     except KeyError as e:
                         os.remove(temp_image_path)
-                        return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown'})
+                        return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown',"verified": False})
                 else:
                     os.remove(temp_image_path)
-                    return JsonResponse({'message': 'Image received successfully!', 'recognition': 'Unknown'})
+                    return JsonResponse({'message': 'Image received successfully!', 'recognition': 'Unknown',"verified": False})
             except ValueError as e:
                 os.remove(temp_image_path)
-                return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown'})
+                return JsonResponse({'message': 'Image received successfully!', 'error': str(e), 'recognition': 'Unknown',"verified": False})
 
         except Exception as e:
             try:
                 os.remove(temp_image_path)
             except Exception as en:
                 pass
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e),"verified": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
