@@ -1,4 +1,5 @@
 
+
 ### **API Documentation for `Facial Verification Backend`**
 
 #### **1. Register User**
@@ -36,7 +37,35 @@
       }
       ```
 
-#### **2. Verify User**
+#### **2. Get Registered Users**
+- **URL:** `/register/`
+- **Method:** `GET`
+- **Response Body:**
+  - **Success (200 OK):**
+    ```json
+    {
+      "message": "Hello, world!",
+      "data": [
+        {
+          "id": "user1",
+          "timestamp": "2023-07-23T12:34:56"
+        },
+        {
+          "id": "user2",
+          "timestamp": "2023-07-23T12:34:56"
+        }
+      ]
+    }
+    ```
+  - **Errors:**
+    - **500 Internal Server Error:**
+      ```json
+      {
+        "error": "Error message describing the issue"
+      }
+      ```
+
+#### **3. Verify User**
 - **URL:** `/verify/`
 - **Method:** `POST`
 - **Request Format:** `multipart/form-data`
@@ -75,7 +104,7 @@
       }
       ```
 
-#### **3. Delete User**
+#### **4. Delete User**
 - **URL:** `/register/`
 - **Method:** `DELETE`
 - **Request Format:** `multipart/form-data`
